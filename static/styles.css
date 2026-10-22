@@ -1,0 +1,1073 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Event Planning Assistant — iOS Bento Glassmorphic Design System
+   All styles self-contained (no external fonts) for CSP compliance.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Original warm ivory & editorial blue palette */
+  --ivory: #EAE6DE;
+  --surface: #F7F4EE;
+  --sand: #DED6C6;
+  --blue: #226192;
+  --blue-dark: #1B4F7C;
+  --blue-tint: #D7E4EF;
+  --ink: #17232D;
+  --muted: #4E5A62;
+  --line: #CBC3B3;
+
+  /* Page background with warm mesh gradient */
+  --bg-base: #EAE6DE;
+  --bg-mesh-1: rgba(34, 97, 146, 0.05);
+  --bg-mesh-2: rgba(185, 168, 134, 0.06);
+  --bg-mesh-3: rgba(222, 214, 198, 0.08);
+
+  /* Surface & Glass — warm ivory tones */
+  --glass: rgba(247, 244, 238, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 2px 20px rgba(23, 35, 45, 0.05), 0 0 0 1px rgba(23, 35, 45, 0.03);
+  --glass-hover-shadow: 0 4px 32px rgba(23, 35, 45, 0.08), 0 0 0 1px rgba(23, 35, 45, 0.04);
+  --surface-white: rgba(255, 255, 255, 0.85);
+  --surface-inset: rgba(120, 120, 128, 0.06);
+
+  /* Text — blue-black ink */
+  --text-primary: #17232D;
+  --text-secondary: #4E5A62;
+  --text-tertiary: #8A9199;
+
+  /* Tint colors — editorial blue as primary anchor */
+  --tint-blue: #226192;
+  --tint-blue-hover: #1B4F7C;
+  --tint-blue-bg: rgba(34, 97, 146, 0.08);
+  --tint-green: #3A8A5C;
+  --tint-green-bg: rgba(58, 138, 92, 0.10);
+  --tint-orange: #C07A20;
+  --tint-orange-bg: rgba(192, 122, 32, 0.10);
+  --tint-red: #C0392B;
+  --tint-red-bg: rgba(192, 57, 43, 0.08);
+  --tint-purple: #7B5EA7;
+  --tint-purple-bg: rgba(123, 94, 167, 0.08);
+  --tint-indigo: #5856D6;
+  --tint-indigo-bg: rgba(88, 86, 214, 0.08);
+  --tint-cyan: #2E86AB;
+  --tint-pink: #C0547A;
+  --tint-mint: #5B9E8F;
+
+  /* Budget palette — blues to warm neutrals */
+  --bento-1: #226192;
+  --bento-2: #3A7AB0;
+  --bento-3: #5B92C2;
+  --bento-4: #84B0D4;
+  --bento-5: #B3CDE3;
+  --bento-6: #B9A886;
+  --bento-7: #8E7D62;
+  --bento-8: #5E5140;
+
+  /* Shapes */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-pill: 980px;
+
+  /* Typography */
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                 system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Motion */
+  --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-fast: 0.2s;
+  --duration-normal: 0.35s;
+  --duration-slow: 0.5s;
+}
+
+/* ── Reset & Base ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: 1rem/1.55 var(--font-system);
+  color: var(--text-primary);
+  letter-spacing: -0.011em;
+
+  /* Ambient mesh gradient background */
+  background: var(--bg-base);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 10% 0%,  var(--bg-mesh-1), transparent),
+    radial-gradient(ellipse 60% 50% at 90% 20%, var(--bg-mesh-2), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, var(--bg-mesh-3), transparent);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Skip Link (Accessibility) ─────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 0;
+  transform: translateY(-200%);
+  background: var(--text-primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  z-index: 9999;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--duration-fast) var(--spring);
+}
+.skip-link:focus {
+  transform: translateY(0.5rem);
+}
+
+/* ── Board Layout (12-Column Bento Grid) ──────────────────────────────── */
+.board {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 82rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+.board:focus { outline: none; }
+
+/* ── Glass Tile Base ───────────────────────────────────────────────────── */
+.tile {
+  background: var(--glass);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem 1.6rem;
+  min-width: 0;
+  box-shadow: var(--glass-shadow);
+  transition:
+    transform var(--duration-normal) var(--spring),
+    box-shadow var(--duration-normal) var(--ease-out);
+}
+.tile h2, .tile h3 {
+  font-family: var(--font-system);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.025em;
+}
+.tile h3 {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+/* ── Header / Intro Tile (Deep Editorial Blue Gradient) ─────────────────── */
+.tile-intro {
+  grid-column: 1 / -1;
+  padding: 2.75rem 2.5rem 2.25rem;
+  text-align: center;
+  background:
+    radial-gradient(120% 120% at 90% 10%, rgba(255, 255, 255, 0.14) 0%, transparent 60%),
+    linear-gradient(140deg, #2E82BE 0%, #226192 48%, #13395B 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(19, 57, 91, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+.tile-intro::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -25%;
+  width: 55%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 60%);
+  pointer-events: none;
+}
+.tile-intro h1 {
+  font-family: var(--font-system);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  margin: 0 auto 0.6rem;
+  max-width: 22ch;
+  position: relative;
+  z-index: 1;
+}
+.tile-intro p {
+  margin: 0 auto;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 50ch;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+.tile-intro .preset-chips {
+  justify-content: center;
+  margin-top: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+.tile-intro .preset-chip {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 0.45rem 1rem;
+  font-size: 0.88rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.tile-intro .preset-chip:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+/* ── Form Panel ────────────────────────────────────────────────────────── */
+.tile-form {
+  grid-column: span 5;
+  align-self: start;
+  position: sticky;
+  top: 1.5rem;
+  border-radius: var(--radius-xl);
+}
+.tile-form h2 {
+  font-size: 1.6rem;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+}
+
+/* iOS Inset Grouped Fieldsets */
+fieldset {
+  border: 0;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+legend {
+  font-family: var(--font-system);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Inset group container for fields */
+.inset-group {
+  background: var(--surface-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0rem;
+  padding: 0.7rem 1rem;
+  position: relative;
+}
+/* Dividers between inset-grouped fields */
+.inset-group .field + .field {
+  border-top: 1px solid rgba(60, 60, 67, 0.08);
+}
+
+.field label {
+  font-weight: 500;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+}
+.field .hint {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: 0.82rem;
+}
+
+/* iOS-style Form Inputs */
+input, select, textarea {
+  font: inherit;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  min-height: 2rem;
+  padding: 0.25rem 0;
+  width: 100%;
+  font-size: 1rem;
+  transition: border-color var(--duration-fast) ease;
+}
+input::placeholder {
+  color: var(--text-tertiary);
+}
+textarea {
+  min-height: 4rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2386868B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  padding-right: 1.5rem;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(0, 113, 227, 0.4);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Segmented Control ─────────────────────────────────────────────────── */
+.segmented-control {
+  display: flex;
+  background: var(--surface-inset);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 2px;
+  position: relative;
+}
+.segmented-control input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  min-height: 0;
+}
+.segmented-control label {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  border-radius: calc(var(--radius-sm) - 3px);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--spring);
+  z-index: 1;
+  user-select: none;
+  white-space: nowrap;
+}
+.segmented-control input[type="radio"]:checked + label {
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+}
+.segmented-control input[type="radio"]:focus-visible + label {
+  outline: 3px solid rgba(0, 113, 227, 0.4);
+  outline-offset: 1px;
+}
+
+/* ── Guest Stepper ─────────────────────────────────────────────────────── */
+.stepper-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.stepper-wrap input {
+  text-align: center;
+  max-width: 6rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  /* hide spinners */
+  -moz-appearance: textfield;
+}
+.stepper-wrap input::-webkit-inner-spin-button,
+.stepper-wrap input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.stepper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface-inset);
+  color: var(--tint-blue);
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--duration-fast) var(--spring);
+  flex-shrink: 0;
+  line-height: 1;
+}
+.stepper-btn:hover {
+  background: var(--tint-blue-bg);
+}
+.stepper-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Currency Quick Chips ──────────────────────────────────────────────── */
+.currency-chips {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+  flex-wrap: wrap;
+}
+.currency-chip {
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--surface-white);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--spring);
+  letter-spacing: 0.02em;
+}
+.currency-chip:hover {
+  background: var(--tint-blue-bg);
+  color: var(--tint-blue);
+  border-color: rgba(0, 113, 227, 0.15);
+}
+.currency-chip.active {
+  background: var(--tint-blue);
+  color: #fff;
+  border-color: var(--tint-blue);
+}
+
+/* ── Primary CTA Button ───────────────────────────────────────────────── */
+button.primary {
+  font: inherit;
+  font-weight: 600;
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
+  background: linear-gradient(140deg, #2E82BE 0%, #226192 50%, #174A76 100%);
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius-pill);
+  min-height: 3rem;
+  padding: 0.75rem 2rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 0.5rem;
+  transition: all var(--duration-fast) var(--spring);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(34, 97, 146, 0.28);
+}
+button.primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+  border-radius: inherit;
+  pointer-events: none;
+}
+button.primary:hover {
+  background: linear-gradient(140deg, #368ECF 0%, #256A9F 50%, #1A5485 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(34, 97, 146, 0.38);
+}
+button.primary:active {
+  transform: scale(0.97);
+  box-shadow: none;
+}
+button.primary:disabled {
+  opacity: 0.5;
+  cursor: progress;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Spinner inside button */
+button.primary[aria-busy="true"] .btn-text {
+  opacity: 0;
+}
+button.primary .spinner {
+  display: none;
+}
+form[aria-busy="true"] button.primary .spinner {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: -0.625rem 0 0 -0.625rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+form[aria-busy="true"] .btn-text {
+  opacity: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.status {
+  min-height: 1.5rem;
+  color: var(--text-secondary);
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ── Results Area ──────────────────────────────────────────────────────── */
+.results {
+  grid-column: span 7;
+  min-width: 0;
+}
+.results:focus { outline: none; }
+
+/* ── Empty State ───────────────────────────────────────────────────────── */
+.tile-empty {
+  min-height: 20rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(34, 97, 146, 0.03), rgba(185, 168, 134, 0.03));
+  border: 2px dashed rgba(0, 0, 0, 0.06);
+  box-shadow: none;
+  padding: 3rem;
+}
+.tile-empty .empty-icon {
+  width: 4.5rem;
+  height: 4.5rem;
+  background: var(--surface-inset);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 1.25rem;
+  animation: float 3s ease-in-out infinite;
+}
+.tile-empty h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+}
+.tile-empty p {
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 30ch;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ── Results Bento Grid ────────────────────────────────────────────────── */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+/* Tile bento placements */
+.bento > .tile-summary   { grid-column: span 3; }
+.bento > .tile-warnings  { grid-column: span 3; }
+.bento > .tile-budget    { grid-column: span 4; }
+.bento > .tile-vendors   { grid-column: span 2; }
+.bento > .tile-timeline  { grid-column: span 3; }
+.bento > .tile-ideas     { grid-column: span 3; }
+
+/* ── Deep Blue Gradient Theme for ALL Bento Cards ─────────────────────── */
+.bento > .tile {
+  background:
+    radial-gradient(120% 120% at 90% 10%, rgba(255, 255, 255, 0.10) 0%, transparent 60%),
+    linear-gradient(140deg, #2E82BE 0%, #226192 48%, #13395B 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  position: relative;
+}
+.bento > .tile::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 60%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 60%);
+  pointer-events: none;
+}
+.bento > .tile h3 {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+/* Hover lift on result tiles */
+.bento > .tile:hover {
+  transform: translateY(-2px);
+  background:
+    radial-gradient(120% 120% at 90% 10%, rgba(255, 255, 255, 0.16) 0%, transparent 60%),
+    linear-gradient(140deg, #368ECF 0%, #256A9F 48%, #164269 100%);
+  box-shadow: 0 8px 36px rgba(19, 57, 91, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* ── Staggered Entry Animation ─────────────────────────────────────────── */
+.bento > .tile {
+  animation: bentoIn var(--duration-slow) var(--spring) both;
+}
+.bento > .tile:nth-child(1) { animation-delay: 0ms; }
+.bento > .tile:nth-child(2) { animation-delay: 70ms; }
+.bento > .tile:nth-child(3) { animation-delay: 140ms; }
+.bento > .tile:nth-child(4) { animation-delay: 210ms; }
+.bento > .tile:nth-child(5) { animation-delay: 280ms; }
+.bento > .tile:nth-child(6) { animation-delay: 350ms; }
+
+@keyframes bentoIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Summary Widget (Hero Card) ────────────────────────────────────────── */
+/* Summary tile inherits the bento-wide blue; no extra overrides needed. */
+.summary-name {
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+.summary-days {
+  font-weight: 800;
+  font-size: 4rem;
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.04em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.summary-label {
+  margin: 0.2rem 0 1rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.95rem;
+}
+.summary-meta {
+  margin: 0.2rem 0 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.88rem;
+}
+.summary-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.01em;
+}
+
+/* ── Warnings Widget ───────────────────────────────────────────────────── */
+/* Warnings tile — inherits blue; badge and text adapted for dark bg */
+.tile-warnings h3 {
+  color: rgba(255, 255, 255, 0.7);
+}
+.tile-warnings .warning-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 200, 80, 0.15);
+  color: #FFD080;
+  border-radius: var(--radius-pill);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.warning-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.warning-list li {
+  position: relative;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.45;
+}
+.warning-list li::before {
+  content: '⚠';
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  font-size: 0.85rem;
+}
+.warning-list li + li {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* No warnings state */
+.tile-warnings .no-warnings {
+  color: #7DDFB0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Budget Widget ─────────────────────────────────────────────────────── */
+.budget-bar {
+  display: flex;
+  height: 0.65rem;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  gap: 2px;
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.15);
+}
+.budget-seg {
+  flex: 1 1 0;
+  min-width: 3px;
+  border-radius: var(--radius-pill);
+  transition: flex-grow var(--duration-normal) var(--spring);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+caption {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  padding-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+th, td {
+  padding: 0.55rem 0.4rem;
+  text-align: left;
+  font-size: 0.92rem;
+}
+th {
+  border-bottom: none;
+  font-weight: 500;
+}
+thead th {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+tbody tr:last-child {
+  border-bottom: none;
+}
+td {
+  font-variant-numeric: tabular-nums;
+}
+td:nth-child(n+2) {
+  text-align: right;
+}
+th[scope="row"] {
+  font-weight: 500;
+}
+.swatch {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  margin-right: 0.55rem;
+  vertical-align: -0.02em;
+}
+
+/* ── Vendor Checklist Widget ───────────────────────────────────────────── */
+.checklist-progress {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+.checklist-progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-top: 0.3rem;
+}
+.checklist-progress-fill {
+  height: 100%;
+  background: #7DDFB0;
+  border-radius: var(--radius-pill);
+  width: 0%;
+  transition: width var(--duration-normal) var(--spring);
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.checklist li {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: opacity var(--duration-fast) ease;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li.checked {
+  opacity: 0.5;
+}
+.checklist li.checked label {
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Custom iOS-style checkbox */
+.checklist input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.35rem;
+  height: 1.35rem;
+  min-width: 1.35rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--duration-fast) var(--spring);
+  margin: 0;
+  flex-shrink: 0;
+  min-height: auto;
+  background: transparent;
+  padding: 0;
+}
+.checklist input[type="checkbox"]:checked {
+  background: #7DDFB0;
+  border-color: #7DDFB0;
+  animation: checkBounce 0.35s var(--spring);
+}
+.checklist input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+@keyframes checkBounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.checklist label {
+  cursor: pointer;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+/* ── Timeline Widget ───────────────────────────────────────────────────── */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.timeline li {
+  position: relative;
+  padding: 0.6rem 0 0.6rem 2rem;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.timeline li:first-child::before {
+  top: 50%;
+}
+.timeline li:last-child::before {
+  bottom: 50%;
+}
+.timeline li::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7DDFB0;
+  box-shadow: 0 0 0 3px rgba(125, 223, 176, 0.2);
+}
+.timeline time {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.78rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.15rem;
+}
+.timeline span {
+  display: block;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+/* ── Ideas Widget ──────────────────────────────────────────────────────── */
+.bento .hint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.88rem;
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+
+.idea {
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.5rem;
+  transition: transform var(--duration-fast) var(--spring);
+  border: 1px solid transparent;
+}
+.idea:last-child { margin-bottom: 0; }
+.idea:hover {
+  transform: translateY(-1px);
+}
+
+.idea-blue {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.idea-sand {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.idea h4 {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  margin: 0 0 0.2rem;
+  letter-spacing: -0.01em;
+}
+.idea h4 {
+  color: #fff;
+}
+.idea p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+/* ── Per-Guest Live Preview ────────────────────────────────────────────── */
+.per-guest-preview {
+  font-size: 0.82rem;
+  color: var(--tint-blue);
+  font-weight: 600;
+  min-height: 1.2rem;
+  margin-top: 0.15rem;
+  transition: opacity var(--duration-fast) ease;
+}
+
+/* ── Quick Preset Chips ────────────────────────────────────────────────── */
+.preset-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.preset-chip {
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-white);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--spring);
+  white-space: nowrap;
+}
+.preset-chip:hover {
+  background: var(--tint-blue-bg);
+  color: var(--tint-blue);
+  border-color: rgba(0, 113, 227, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 64rem) {
+  .tile-form, .results {
+    grid-column: 1 / -1;
+    position: static;
+  }
+  .tile-form {
+    position: static;
+  }
+}
+
+@media (max-width: 52rem) {
+  .board { padding: 1rem; gap: 0.75rem; }
+  .bento {
+    grid-template-columns: 1fr;
+  }
+  .bento > .tile {
+    grid-column: 1 / -1;
+  }
+  .tile-intro { padding: 1.75rem 1.5rem 1.5rem; }
+  .tile-intro h1 { font-size: 1.8rem; }
+  .tile { padding: 1.25rem 1.3rem; border-radius: var(--radius-lg); }
+}
+
+/* ── Accessibility: Reduced Motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .bento > .tile {
+    animation: none;
+    opacity: 1;
+  }
+}

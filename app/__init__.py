@@ -1,0 +1,1 @@
+"""Event Planning Assistant package."""
