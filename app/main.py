@@ -1,7 +1,5 @@
 """FastAPI application: serves the planner UI and the /api/plan endpoint."""
 
-from __future__ import annotations
-
 import logging
 from collections.abc import Callable
 from datetime import date
@@ -31,8 +29,8 @@ SECURITY_HEADERS = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
     "X-Permitted-Cross-Domain-Policies": "none",
     "Cross-Origin-Opener-Policy": "same-origin",
     "Cross-Origin-Resource-Policy": "same-origin",
@@ -66,8 +64,7 @@ def create_app(
         ],
     )
     app.state.limiter = limiter
-    # Type ignore silences IDE / Pylance contravariant ExceptionHandler typing error on line 63
-    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type, reportArgumentType]
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.middleware("http")
@@ -94,13 +91,7 @@ def create_app(
     )
     @limiter.limit("10/minute")
     def create_plan(request: Request, body: EventRequest) -> Plan:
-        logger.info(
-            "Generating event plan: type=%s, budget=%.2f %s, guests=%d",
-            body.event_type.value,
-            body.budget,
-            body.currency,
-            body.guest_count,
-        )
+        logger.info("Generating event plan for type=%s budget=%s", body.event_type.value, body.budget)
         try:
             return build_plan(body, today=today_provider(), generator=generator)
         except ValueError as exc:
