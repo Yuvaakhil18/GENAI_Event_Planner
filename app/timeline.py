@@ -46,6 +46,18 @@ RUSH_DAYS = 14
 
 
 def build_timeline(req: EventRequest, today: date) -> tuple[list[TimelineTask], list[str]]:
+    """Build a dated task timeline, compressing when lead time is short.
+
+    Args:
+        req: Validated event request.
+        today: Current date for calculating lead time.
+
+    Returns:
+        A tuple of (sorted tasks, advisory notes about compressed schedule).
+
+    Raises:
+        ValueError: If the event date is in the past.
+    """
     days_left = (req.event_date - today).days
     if days_left < 0:
         raise ValueError("The event date is in the past.")

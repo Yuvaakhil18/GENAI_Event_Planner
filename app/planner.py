@@ -21,6 +21,14 @@ LARGE_COMMUNITY_EVENT = 200
 
 
 def context_warnings(req: EventRequest) -> list[str]:
+    """Generate context-specific warnings about venue, capacity, and budget.
+
+    Args:
+        req: Validated event request.
+
+    Returns:
+        List of warning messages for potential logistical constraints.
+    """
     warnings: list[str] = []
     if req.venue != Venue.INDOOR:
         warnings.append(
@@ -39,6 +47,19 @@ def context_warnings(req: EventRequest) -> list[str]:
 
 
 def build_plan(req: EventRequest, today: date, generator: TextGenerator | None = None) -> Plan:
+    """Orchestrate all sub-modules into a single Plan response.
+
+    Args:
+        req: Validated event request from the API.
+        today: Current date, injected for testability.
+        generator: Optional LLM backend for AI-generated ideas.
+
+    Returns:
+        A fully assembled Plan ready for JSON serialisation.
+
+    Raises:
+        ValueError: If the event date is too far in the future or in the past.
+    """
     if req.event_date > today + timedelta(days=365 * MAX_LEAD_YEARS):
         raise ValueError(f"The event date must be within {MAX_LEAD_YEARS} years.")
 

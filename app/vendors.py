@@ -24,6 +24,14 @@ BASE_VENDORS: dict[EventType, list[str]] = {
 
 
 def vendor_checklist(req: EventRequest) -> list[str]:
+    """Return the vendor checklist, adding conditional items for venue and size.
+
+    Args:
+        req: Validated event request.
+
+    Returns:
+        List of recommended vendors tailored to guest count and venue.
+    """
     items = [*BASE_VENDORS[req.event_type], ACCESSIBILITY_ITEM]
     if req.venue != Venue.INDOOR:
         items.append("Weather backup plan and tent rental")
