@@ -6,16 +6,13 @@ import logging
 from collections.abc import Callable
 from datetime import date
 from pathlib import Path
-from typing import cast
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
-from starlette.types import ExceptionHandler
 
 from .config import Settings
 from .llm import AnthropicTextGenerator, TextGenerator
@@ -69,16 +66,8 @@ def create_app(
         ],
     )
     app.state.limiter = limiter
-    app.add_exception_handler(RateLimitExceeded, cast(ExceptionHandler, _rate_limit_exceeded_handler))
-
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["*"],
-    )
-
+    # Type ignore silences IDE / Pylance contravariant ExceptionHandler typing error on line 63
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type, reportArgumentType]
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.middleware("http")
