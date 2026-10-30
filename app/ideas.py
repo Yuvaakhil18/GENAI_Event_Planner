@@ -38,11 +38,11 @@ TEMPLATE_IDEAS: dict[EventType, list[tuple[str, str]]] = {
         ("Themed photo corner", "A backdrop and a few props make a memorable photo spot."),
         ("Guest challenge", "A simple game with a small prize keeps every age group involved."),
         ("Personal slideshow", "Gather photos from friends and play them on a loop."),
-        ("Build-your-own station", "Tacos, sundaes or toppings let guests customise food."),
+        ("Build-your-own station", "Tacos, sundaes or pizza toppings let guests customise their food."),
         ("Take-home treat", "A small favor tied to the theme gives guests a reason to remember."),
     ],
     EventType.COMMUNITY: [
-        ("Volunteer check-in board", "A sign-up board speeds up volunteer shift onboarding."),
+        ("Volunteer check-in board", "A sign-up board with shift times speeds up volunteer onboarding."),
         ("Kids' corner", "A supervised activity area lets families with children stay longer."),
         ("Local partner stalls", "Invite nearby groups to share information at small tables."),
         ("Feedback QR code", "A short survey at the exit shows what to improve next time."),
@@ -50,14 +50,10 @@ TEMPLATE_IDEAS: dict[EventType, list[tuple[str, str]]] = {
     ],
 }
 
-OUTDOOR_IDEA = (
-    "Shade and seating zones",
-    "Spread shaded seating across the site so guests can rest.",
-)
+OUTDOOR_IDEA = ("Shade and seating zones", "Spread shaded seating across the site so guests can rest.")
 
 
 def build_user_prompt(req: EventRequest, budget_lines: list[BudgetLine]) -> str:
-    """Render the user prompt containing event details inside safe XML tags."""
     details = {
         "event_type": req.event_type.value,
         "guest_count": req.guest_count,
@@ -67,14 +63,8 @@ def build_user_prompt(req: EventRequest, budget_lines: list[BudgetLine]) -> str:
         "budget_split": {line.category: line.amount for line in budget_lines},
         "notes": req.notes,
     }
-    # Escape angle brackets and XML delimiters so user text cannot close the data block early.
-    raw_json = json.dumps(details, ensure_ascii=False)
-    encoded = (
-        raw_json.replace("&", "&amp;")
-        .replace("<", "\\u003c")
-        .replace(">", "\\u003e")
-        .replace("`", "'")
-    )
+    # Escape angle brackets so user text cannot close the data block early.
+    encoded = json.dumps(details, ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e")
     return f"<event_details>\n{encoded}\n</event_details>\nSuggest up to {MAX_IDEAS} ideas."
 
 
@@ -105,16 +95,13 @@ def parse_ideas(raw: str) -> list[Idea]:
 
 
 def template_ideas(req: EventRequest) -> list[Idea]:
-    """Return curated fallback ideas when the LLM is unavailable."""
     ideas = [Idea(title=t, description=d) for t, d in TEMPLATE_IDEAS[req.event_type]]
     if req.venue != Venue.INDOOR:
         ideas.insert(0, Idea(title=OUTDOOR_IDEA[0], description=OUTDOOR_IDEA[1]))
     return ideas[:MAX_IDEAS]
 
 
-_idea_cache: TTLCache[str, tuple[list[Idea], str]] = TTLCache[str, tuple[list[Idea], str]](
-    maxsize=128, ttl=300
-)
+_idea_cache: TTLCache = TTLCache(maxsize=128, ttl=300)
 
 
 def generate_ideas(
@@ -122,14 +109,13 @@ def generate_ideas(
     budget_lines: list[BudgetLine],
     generator: TextGenerator | None,
 ) -> tuple[list[Idea], str]:
-    """Return personalised ideas (AI when available) and the source label."""
     if generator is None:
         return template_ideas(req), "template"
 
     user_prompt = build_user_prompt(req, budget_lines)
     cache_key = hashlib.sha256(user_prompt.encode()).hexdigest()
 
-    cached: tuple[list[Idea], str] | None = _idea_cache.get(cache_key)
+    cached = _idea_cache.get(cache_key)
     if cached is not None:
         return cached
 

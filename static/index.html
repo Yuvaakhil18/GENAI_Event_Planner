@@ -30,13 +30,14 @@
           <legend>The basics</legend>
           <div class="inset-group">
             <div class="field">
-              <span class="field-label" id="event-type-label">Type of event</span>
-              <select id="event_type" name="event_type" aria-label="Type of event" aria-hidden="true" tabindex="-1" style="position:absolute;opacity:0;height:0;width:0;min-height:0;overflow:hidden;">
+              <label>Type of event</label>
+              <!-- Hidden real select kept for form submission -->
+              <select id="event_type" name="event_type" required aria-hidden="true" tabindex="-1" style="position:absolute;opacity:0;height:0;width:0;min-height:0;overflow:hidden;">
                 <option value="wedding">Wedding</option>
                 <option value="birthday">Birthday</option>
                 <option value="community">Community event</option>
               </select>
-              <div class="segmented-control" role="radiogroup" aria-labelledby="event-type-label">
+              <div class="segmented-control" role="radiogroup" aria-label="Type of event">
                 <input type="radio" name="event_type_seg" id="seg-wedding" value="wedding" checked>
                 <label for="seg-wedding">Wedding</label>
                 <input type="radio" name="event_type_seg" id="seg-birthday" value="birthday">
@@ -48,27 +49,23 @@
             <div class="field">
               <label for="name">Event name</label>
               <input id="name" name="name" type="text" maxlength="100" required
-                     placeholder="Maya's 30th" autocomplete="name"
-                     aria-describedby="name-error">
-              <span id="name-error" class="field-error" role="alert" aria-live="assertive"></span>
+                     placeholder="Maya's 30th" autocomplete="off">
             </div>
             <div class="field">
               <label for="event_date">Event date</label>
               <input id="event_date" name="event_date" type="date" required
-                     aria-describedby="date-hint date-error">
+                     aria-describedby="date-hint">
               <p id="date-hint" class="hint">Up to five years ahead.</p>
-              <span id="date-error" class="field-error" role="alert" aria-live="assertive"></span>
             </div>
             <div class="field">
               <label for="guest_count">Number of guests</label>
               <div class="stepper-wrap">
                 <button type="button" class="stepper-btn" id="guest-minus" aria-label="Decrease guests" aria-controls="guest_count">−</button>
                 <input id="guest_count" name="guest_count" type="number" min="1" max="2000" step="1"
-                       required aria-describedby="guest-hint guest-error" placeholder="50">
+                       required aria-describedby="guest-hint" placeholder="50">
                 <button type="button" class="stepper-btn" id="guest-plus" aria-label="Increase guests" aria-controls="guest_count">+</button>
               </div>
               <p id="guest-hint" class="hint">Your best estimate is fine.</p>
-              <span id="guest-error" class="field-error" role="alert" aria-live="assertive"></span>
             </div>
           </div>
         </fieldset>
@@ -79,32 +76,30 @@
             <div class="field">
               <label for="budget">Total budget</label>
               <input id="budget" name="budget" type="number" min="1" step="0.01" required
-                     aria-describedby="budget-hint budget-error" placeholder="5000">
+                     aria-describedby="budget-hint" placeholder="5000">
               <p id="budget-hint" class="hint">Enter the amount in the currency below.</p>
               <div class="per-guest-preview" id="per-guest-preview" aria-live="polite"></div>
-              <span id="budget-error" class="field-error" role="alert" aria-live="assertive"></span>
             </div>
             <div class="field">
               <label for="currency">Currency</label>
               <input id="currency" name="currency" type="text" value="USD" maxlength="3"
-                     pattern="[A-Za-z]{3}" required aria-describedby="currency-hint currency-error">
-              <div class="currency-chips" id="currency-chips" role="group" aria-label="Quick currency selection">
-                <button type="button" class="currency-chip active" data-currency="USD" aria-pressed="true">USD</button>
-                <button type="button" class="currency-chip" data-currency="EUR" aria-pressed="false">EUR</button>
-                <button type="button" class="currency-chip" data-currency="GBP" aria-pressed="false">GBP</button>
-                <button type="button" class="currency-chip" data-currency="INR" aria-pressed="false">INR</button>
+                     pattern="[A-Za-z]{3}" required aria-describedby="currency-hint">
+              <div class="currency-chips" id="currency-chips">
+                <button type="button" class="currency-chip active" data-currency="USD">USD</button>
+                <button type="button" class="currency-chip" data-currency="EUR">EUR</button>
+                <button type="button" class="currency-chip" data-currency="GBP">GBP</button>
+                <button type="button" class="currency-chip" data-currency="INR">INR</button>
               </div>
               <p id="currency-hint" class="hint">Three-letter code, such as USD, EUR or INR.</p>
-              <span id="currency-error" class="field-error" role="alert" aria-live="assertive"></span>
             </div>
             <div class="field">
-              <span class="field-label" id="venue-type-label">Where will it be?</span>
-              <select id="venue" name="venue" aria-label="Where will it be?" aria-hidden="true" tabindex="-1" style="position:absolute;opacity:0;height:0;width:0;min-height:0;overflow:hidden;">
+              <label>Where will it be?</label>
+              <select id="venue" name="venue" aria-hidden="true" tabindex="-1" style="position:absolute;opacity:0;height:0;width:0;min-height:0;overflow:hidden;">
                 <option value="indoor">Indoors</option>
                 <option value="outdoor">Outdoors</option>
                 <option value="mixed">Both</option>
               </select>
-              <div class="segmented-control" role="radiogroup" aria-labelledby="venue-type-label">
+              <div class="segmented-control" role="radiogroup" aria-label="Venue type">
                 <input type="radio" name="venue_seg" id="seg-indoor" value="indoor" checked>
                 <label for="seg-indoor">Indoors</label>
                 <input type="radio" name="venue_seg" id="seg-outdoor" value="outdoor">
@@ -132,7 +127,7 @@
           <span class="btn-text">Create my plan</span>
           <span class="spinner" aria-hidden="true"></span>
         </button>
-        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <p id="status" class="status" role="status"></p>
       </form>
     </section>
 
