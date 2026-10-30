@@ -10,6 +10,8 @@ DEFAULT_MODEL = "claude-haiku-5-5"
 
 @dataclass(frozen=True)
 class Settings:
+    """Application runtime configuration parsed from environment variables."""
+
     # repr=False keeps the key out of logs and tracebacks.
     anthropic_api_key: str | None = field(default=None, repr=False)
     model: str = DEFAULT_MODEL
@@ -17,6 +19,7 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> Settings:
+        """Load configuration from environment variables with production defaults."""
         return cls(
             anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY") or None,
             model=os.environ.get("PLANNER_MODEL", DEFAULT_MODEL),

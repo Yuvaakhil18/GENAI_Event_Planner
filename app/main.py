@@ -68,13 +68,15 @@ def create_app(
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.middleware("http")
-    async def add_security_headers(request: Request, call_next):
+    async def add_security_headers(request: Request, call_next: Callable[[Request], Response]) -> Response:
+        """Inject strict security headers into every HTTP response."""
         response: Response = await call_next(request)
         response.headers.update(SECURITY_HEADERS)
         return response
 
     @app.get("/", include_in_schema=False)
     def index() -> FileResponse:
+        """Serve the single-page application dashboard."""
         return FileResponse(STATIC_DIR / "index.html")
 
     @app.post(
@@ -91,6 +93,7 @@ def create_app(
     )
     @limiter.limit("10/minute")
     def create_plan(request: Request, body: EventRequest) -> Plan:
+        """Generate a complete event plan including budget, timeline, vendors, and ideas."""
         logger.info("Generating event plan for type=%s budget=%s", body.event_type.value, body.budget)
         try:
             return build_plan(body, today=today_provider(), generator=generator)
