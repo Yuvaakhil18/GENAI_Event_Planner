@@ -3,18 +3,20 @@
 from __future__ import annotations
 
 from datetime import date
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
+    """Supported event categories."""
     WEDDING = "wedding"
     BIRTHDAY = "birthday"
     COMMUNITY = "community"
 
 
-class Venue(str, Enum):
+class Venue(StrEnum):
+    """Where the event takes place."""
     INDOOR = "indoor"
     OUTDOOR = "outdoor"
     MIXED = "mixed"
@@ -27,6 +29,7 @@ def _clean_text(value: str) -> str:
 
 
 class EventRequest(BaseModel):
+    """Validated user input from the planning form."""
     model_config = ConfigDict(extra="forbid")
 
     event_type: EventType
@@ -37,6 +40,11 @@ class EventRequest(BaseModel):
     currency: str = Field(default="USD", pattern=r"^[A-Z]{3}$")
     venue: Venue = Venue.INDOOR
     notes: str = Field(default="", max_length=500)
+
+    @field_validator("currency", mode="before")
+    @classmethod
+    def _currency_uppercase(cls, value: str) -> str:
+        return value.strip().upper() if isinstance(value, str) else value
 
     @field_validator("name")
     @classmethod
@@ -53,23 +61,27 @@ class EventRequest(BaseModel):
 
 
 class BudgetLine(BaseModel):
+    """A single row in the budget breakdown."""
     category: str
     amount: float
     share: float
 
 
 class TimelineTask(BaseModel):
+    """A scheduled task with a due date."""
     due: date
     title: str
     category: str
 
 
 class Idea(BaseModel):
+    """A single event idea suggestion."""
     title: str
     description: str
 
 
 class Plan(BaseModel):
+    """Complete event plan returned by the API."""
     event_name: str
     event_type: EventType
     event_date: date
