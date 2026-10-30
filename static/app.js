@@ -19,6 +19,13 @@
 
   // ── Helpers ───────────────────────────────────────────────────────────
   // All server data is inserted with textContent, never innerHTML, to prevent XSS.
+  /**
+   * Create a DOM element with optional text content and attributes.
+   * @param {string} tag - HTML tag name.
+   * @param {string} [text] - Text content.
+   * @param {Object<string,string>} [attrs] - Attribute key-value pairs.
+   * @returns {HTMLElement}
+   */
   function el(tag, text, attrs = {}) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;
@@ -26,8 +33,15 @@
     return node;
   }
 
+  /** @param {string} text - Underscore-separated text to title-case. */
   const titleCase = (text) => text.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
 
+  /**
+   * Format a monetary amount using the browser's Intl API.
+   * @param {number} amount
+   * @param {string} currency - ISO 4217 currency code.
+   * @returns {string}
+   */
   function money(amount, currency) {
     try {
       return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(amount);
@@ -36,6 +50,11 @@
     }
   }
 
+  /**
+   * Calculate the number of days from today until the given ISO date.
+   * @param {string} isoDate - Date string in YYYY-MM-DD format.
+   * @returns {number}
+   */
   function daysUntil(isoDate) {
     const [year, month, day] = isoDate.split("-").map(Number);
     const event = new Date(year, month - 1, day);
@@ -46,12 +65,32 @@
 
   // ── Segmented Controls ────────────────────────────────────────────────
   // Sync segmented radio buttons → hidden <select> for form submission.
+  /**
+   * Wire a set of radio buttons to keep a hidden <select> in sync.
+   * @param {string} radioName - Name attribute shared by the radio inputs.
+   * @param {string} selectId - ID of the hidden select element.
+   */
   function setupSegmentedControl(radioName, selectId) {
-    const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+    const radios = Array.from(document.querySelectorAll(`input[name="${radioName}"]`));
     const hiddenSelect = document.getElementById(selectId);
-    radios.forEach((radio) => {
+    radios.forEach((radio, index) => {
       radio.addEventListener("change", () => {
         if (radio.checked) hiddenSelect.value = radio.value;
+      });
+      radio.addEventListener("keydown", (e) => {
+        let nextIndex = null;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          e.preventDefault();
+          nextIndex = (index + 1) % radios.length;
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          e.preventDefault();
+          nextIndex = (index - 1 + radios.length) % radios.length;
+        }
+        if (nextIndex !== null) {
+          radios[nextIndex].checked = true;
+          radios[nextIndex].focus();
+          hiddenSelect.value = radios[nextIndex].value;
+        }
       });
     });
   }
@@ -75,19 +114,26 @@
     const chip = e.target.closest(".currency-chip");
     if (!chip) return;
     currencyInput.value = chip.dataset.currency;
-    document.querySelectorAll(".currency-chip").forEach((c) => c.classList.remove("active"));
+    document.querySelectorAll(".currency-chip").forEach((c) => {
+      c.classList.remove("active");
+      c.setAttribute("aria-pressed", "false");
+    });
     chip.classList.add("active");
+    chip.setAttribute("aria-pressed", "true");
     updatePerGuest();
   });
   // Sync manual currency typing with chips.
   currencyInput.addEventListener("input", () => {
     const val = currencyInput.value.toUpperCase();
     document.querySelectorAll(".currency-chip").forEach((c) => {
-      c.classList.toggle("active", c.dataset.currency === val);
+      const active = c.dataset.currency === val;
+      c.classList.toggle("active", active);
+      c.setAttribute("aria-pressed", active ? "true" : "false");
     });
   });
 
   // ── Per-Guest Live Preview ────────────────────────────────────────────
+  /** Update the per-guest cost preview below the budget field. */
   function updatePerGuest() {
     const guests = parseInt(guestInput.value, 10);
     const budget = parseFloat(budgetInput.value);
@@ -145,6 +191,13 @@
   });
 
   // ── Tile Builder ──────────────────────────────────────────────────────
+  /**
+   * Create a bento-grid tile (section) with a heading and body.
+   * @param {string} variant - CSS class variant for styling.
+   * @param {string} title - Section heading text.
+   * @param {HTMLElement} body - Rendered content element.
+   * @returns {HTMLElement}
+   */
   function tile(variant, title, body) {
     const id = `tile-${title.toLowerCase().replace(/\W+/g, "-")}`;
     const wrapper = el("section", undefined, { class: `tile ${variant}`, "aria-labelledby": id });
@@ -153,6 +206,7 @@
   }
 
   // ── Summary Widget (Hero Card) ────────────────────────────────────────
+  /** Build the hero summary card body. */
   function summaryBody(plan) {
     const days = daysUntil(plan.event_date);
     const wrap = el("div");
@@ -176,6 +230,7 @@
   }
 
   // ── Warnings Widget ───────────────────────────────────────────────────
+  /** Build the warnings list or a success message. */
   function warningsBody(warnings) {
     const wrap = el("div");
     if (!warnings.length) {
@@ -196,6 +251,7 @@
   }
 
   // ── Budget Widget ─────────────────────────────────────────────────────
+  /** Build the budget breakdown bar chart and table. */
   function budgetBody(plan) {
     const wrap = el("div");
 
@@ -237,6 +293,7 @@
   }
 
   // ── Vendor Checklist Widget ───────────────────────────────────────────
+  /** Build the interactive vendor checklist with progress tracking. */
   function checklist(items) {
     const wrap = el("div");
 
@@ -272,6 +329,7 @@
   }
 
   // ── Timeline Widget ───────────────────────────────────────────────────
+  /** Build the ordered timeline list. */
   function timeline(tasks) {
     const ol = el("ol", undefined, { class: "timeline" });
     for (const task of tasks) {
@@ -283,6 +341,7 @@
   }
 
   // ── Ideas Widget ──────────────────────────────────────────────────────
+  /** Build the ideas card grid. */
   function ideasBody(ideas, source) {
     const wrap = el("div");
     wrap.append(
@@ -303,8 +362,9 @@
   }
 
   // ── Render Results ────────────────────────────────────────────────────
+  /** Render all result tiles into the results container. */
   function render(plan) {
-    const grid = el("div", undefined, { class: "bento" });
+    const grid = el("div", undefined, { class: "bento", role: "region", "aria-label": "Event Strategy Breakdown" });
     grid.append(
       tile("tile-summary", "Overview", summaryBody(plan)),
       tile("tile-warnings", "Things to check", warningsBody(plan.warnings)),
@@ -318,6 +378,7 @@
   }
 
   // ── Read Form Data ────────────────────────────────────────────────────
+  /** Read and normalise form data into an API-ready payload. */
   function readForm() {
     const data = new FormData(form);
     return {
@@ -332,21 +393,72 @@
     };
   }
 
+  /** Map an HTTP error status to a user-friendly message. */
   function errorMessage(status, data) {
     if (status === 422 && typeof data.detail === "string") return data.detail;
     if (status === 422) return "Please check the highlighted fields and try again.";
     return "We could not build your plan right now. Please try again shortly.";
   }
 
+  /** Toggle the form's busy state and disable the submit button. */
   function setBusy(busy) {
     submitButton.disabled = busy;
     form.setAttribute("aria-busy", String(busy));
   }
 
+  // ── Validation Helpers ────────────────────────────────────────────────
+  const fieldsToValidate = [
+    { input: document.getElementById("name"), error: document.getElementById("name-error"), name: "Event name" },
+    { input: document.getElementById("event_date"), error: document.getElementById("date-error"), name: "Event date" },
+    { input: document.getElementById("guest_count"), error: document.getElementById("guest-error"), name: "Number of guests" },
+    { input: document.getElementById("budget"), error: document.getElementById("budget-error"), name: "Total budget" },
+    { input: document.getElementById("currency"), error: document.getElementById("currency-error"), name: "Currency code" },
+  ];
+
+  fieldsToValidate.forEach(({ input, error }) => {
+    if (!input || !error) return;
+    input.addEventListener("input", () => {
+      if (input.validity.valid) {
+        input.removeAttribute("aria-invalid");
+        error.textContent = "";
+      }
+    });
+  });
+
+  function validateAllFields() {
+    let firstInvalid = null;
+    fieldsToValidate.forEach(({ input, error, name }) => {
+      if (!input || !error) return;
+      if (!input.checkValidity()) {
+        input.setAttribute("aria-invalid", "true");
+        if (input.validity.valueMissing) {
+          error.textContent = `${name} is required.`;
+        } else if (input.validity.rangeUnderflow) {
+          error.textContent = `${name} must be at least ${input.min}.`;
+        } else if (input.validity.rangeOverflow) {
+          error.textContent = `${name} cannot exceed ${input.max}.`;
+        } else if (input.validity.patternMismatch) {
+          error.textContent = `${name} must be a 3-letter currency code (e.g., USD, EUR).`;
+        } else {
+          error.textContent = input.validationMessage;
+        }
+        if (!firstInvalid) firstInvalid = input;
+      } else {
+        input.removeAttribute("aria-invalid");
+        error.textContent = "";
+      }
+    });
+    return firstInvalid;
+  }
+
   // ── Form Submission ───────────────────────────────────────────────────
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!form.reportValidity()) return;
+    const invalidInput = validateAllFields();
+    if (invalidInput) {
+      invalidInput.focus();
+      return;
+    }
 
     setBusy(true);
     statusEl.textContent = "Building your plan…";

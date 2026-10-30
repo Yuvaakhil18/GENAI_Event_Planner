@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
 from .models import BudgetLine, EventRequest, EventType
 
@@ -32,6 +32,14 @@ MIN_PER_GUEST: dict[EventType, float] = {
 
 
 def allocate(req: EventRequest) -> list[BudgetLine]:
+    """Split the total budget into category lines using pre-defined weights.
+
+    Args:
+        req: Validated event request containing event type and budget.
+
+    Returns:
+        Ordered list of budget lines whose amounts sum to ``req.budget``.
+    """
     weights = ALLOCATION[req.event_type]
     budget_d = Decimal(str(req.budget))
     lines: list[BudgetLine] = []
@@ -49,6 +57,14 @@ def allocate(req: EventRequest) -> list[BudgetLine]:
 
 
 def per_guest_warning(req: EventRequest) -> str | None:
+    """Return a warning string if the per-guest spend falls below the floor.
+
+    Args:
+        req: Validated event request.
+
+    Returns:
+        A human-readable warning, or ``None`` if the budget is adequate.
+    """
     per_guest = req.budget / req.guest_count
     floor = MIN_PER_GUEST[req.event_type]
     if per_guest >= floor:
