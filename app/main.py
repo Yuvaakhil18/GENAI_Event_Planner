@@ -1,7 +1,7 @@
 """FastAPI application: serves the planner UI and the /api/plan endpoint."""
 
 import logging
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from datetime import date
 from pathlib import Path
 
@@ -68,7 +68,9 @@ def create_app(
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.middleware("http")
-    async def add_security_headers(request: Request, call_next: Callable[[Request], Response]) -> Response:
+    async def add_security_headers(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         """Inject strict security headers into every HTTP response."""
         response: Response = await call_next(request)
         response.headers.update(SECURITY_HEADERS)
