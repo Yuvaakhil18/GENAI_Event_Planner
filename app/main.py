@@ -46,7 +46,19 @@ def create_app(
         )
 
     limiter = Limiter(key_func=get_remote_address)
-    app = FastAPI(title="Event Planning Assistant", version="1.0.0")
+    app = FastAPI(
+        title="Event Planning Assistant",
+        description="AI-powered event planning assistant providing budget allocation, adaptive timelines, vendor checklists, risk warnings, and creative ideas.",
+        version="1.0.0",
+        docs_url="/docs",
+        redoc_url="/redoc",
+        openapi_tags=[
+            {
+                "name": "Planner",
+                "description": "Core event planning and strategy generation endpoints.",
+            }
+        ],
+    )
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -61,7 +73,18 @@ def create_app(
     def index() -> FileResponse:
         return FileResponse(STATIC_DIR / "index.html")
 
-    @app.post("/api/plan", response_model=Plan)
+    @app.post(
+        "/api/plan",
+        response_model=Plan,
+        tags=["Planner"],
+        summary="Generate a comprehensive event plan",
+        description="Generates budget breakdown, milestone timeline, vendor checklist, risk analysis, and creative recommendations.",
+        responses={
+            200: {"description": "Successfully generated event plan."},
+            422: {"description": "Validation error in event parameters."},
+            429: {"description": "Rate limit exceeded (10 requests/minute)."},
+        },
+    )
     @limiter.limit("10/minute")
     def create_plan(request: Request, body: EventRequest) -> Plan:
         try:
