@@ -84,6 +84,18 @@ def test_parse_skips_non_dict_items_in_array() -> None:
     assert ideas[0].title == "Valid"
 
 
+def test_parse_skips_items_with_empty_title_or_description() -> None:
+    """Items missing a title or description are skipped."""
+    raw = json.dumps([
+        {"title": "", "description": "No title"},
+        {"title": "No description", "description": "   "},
+        {"title": "Valid Idea", "description": "Has both fields"},
+    ])
+    ideas = parse_ideas(raw)
+    assert len(ideas) == 1
+    assert ideas[0].title == "Valid Idea"
+
+
 # ── Generation tests ────────────────────────────────────────────────────
 
 

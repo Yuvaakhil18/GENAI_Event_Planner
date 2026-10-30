@@ -67,13 +67,11 @@ def build_user_prompt(req: EventRequest, budget_lines: list[BudgetLine]) -> str:
         "budget_split": {line.category: line.amount for line in budget_lines},
         "notes": req.notes,
     }
-    # Escape angle brackets and XML delimiters so user text cannot close the data block early.
-    raw_json = json.dumps(details, ensure_ascii=False)
+    # Escape angle brackets with JSON unicode sequences so user text cannot break the XML tags.
     encoded = (
-        raw_json.replace("&", "&amp;")
+        json.dumps(details, ensure_ascii=False)
         .replace("<", "\\u003c")
         .replace(">", "\\u003e")
-        .replace("`", "'")
     )
     return f"<event_details>\n{encoded}\n</event_details>\nSuggest up to {MAX_IDEAS} ideas."
 

@@ -1,9 +1,12 @@
-from pathlib import Path
-from fastapi.responses import FileResponse
-from app.main import app, STATIC_DIR
+"""Vercel serverless entrypoint for the Event Planning Assistant."""
 
-# Handle /api and /api/index paths if Vercel routes without stripping prefix
+from fastapi.responses import FileResponse
+
+from app.main import STATIC_DIR, app
+
+
 @app.get("/api", include_in_schema=False)
 @app.get("/api/index", include_in_schema=False)
 def vercel_index() -> FileResponse:
+    """Serve the single-page application when invoked via prefixed serverless path."""
     return FileResponse(STATIC_DIR / "index.html")

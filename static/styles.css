@@ -651,7 +651,7 @@ form[aria-busy="true"] .btn-text {
   pointer-events: none;
 }
 .bento > .tile h3 {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -731,7 +731,7 @@ form[aria-busy="true"] .btn-text {
 /* ── Warnings Widget ───────────────────────────────────────────────────── */
 /* Warnings tile — inherits blue; badge and text adapted for dark bg */
 .tile-warnings h3 {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.92);
 }
 .tile-warnings .warning-badge {
   display: inline-flex;
@@ -817,7 +817,7 @@ th {
   font-weight: 500;
 }
 thead th {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.90);
   font-size: 0.8rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -852,7 +852,7 @@ th[scope="row"] {
 /* ── Vendor Checklist Widget ───────────────────────────────────────────── */
 .checklist-progress {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.90);
   margin-bottom: 0.75rem;
   font-weight: 500;
 }
@@ -997,7 +997,7 @@ th[scope="row"] {
 
 /* ── Ideas Widget ──────────────────────────────────────────────────────── */
 .bento .hint {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 0.88rem;
   margin: 0 0 0.75rem;
   line-height: 1.4;
@@ -1035,7 +1035,7 @@ th[scope="row"] {
 }
 .idea p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.90);
   font-size: 0.88rem;
   line-height: 1.4;
 }
@@ -1112,4 +1112,14 @@ th[scope="row"] {
     animation: none;
     opacity: 1;
   }
+}
+
+.sr-only-hidden {
+  position: absolute !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }

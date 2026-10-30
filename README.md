@@ -138,7 +138,7 @@ Access the application at [http://127.0.0.1:8000](http://127.0.0.1:8000). Intera
 
 ### Running Tests & Quality Verification
 ```bash
-# Run complete test suite (79 unit and integration tests)
+# Run complete test suite (80 unit and integration tests)
 pytest
 
 # Run tests with 100% statement coverage report
