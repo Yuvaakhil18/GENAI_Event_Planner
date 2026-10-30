@@ -33,7 +33,7 @@
   /* Text — blue-black ink */
   --text-primary: #17232D;
   --text-secondary: #4E5A62;
-  --text-tertiary: #8A9199;
+  --text-tertiary: #545D65;
 
   /* Tint colors — editorial blue as primary anchor */
   --tint-blue: #226192;
@@ -120,6 +120,33 @@ body {
 }
 .skip-link:focus {
   transform: translateY(0.5rem);
+}
+
+/* ── Focus Visible (Accessibility WCAG 2.4.7 & 2.4.11) ────────────────── */
+:focus-visible {
+  outline: 2px solid var(--tint-blue);
+  outline-offset: 2px;
+}
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--tint-blue);
+  outline-offset: 0;
+  border-color: var(--tint-blue);
+}
+.segmented-control input:focus-visible + label {
+  outline: 2px solid var(--tint-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-pill);
+}
+
+/* ── Field Label (for non-input-linked group labels) ───────────────────── */
+.field-label {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
 }
 
 /* ── Board Layout (12-Column Bento Grid) ──────────────────────────────── */
@@ -285,6 +312,21 @@ legend {
   font-weight: 500;
   font-size: 0.92rem;
   color: var(--text-primary);
+}
+.field-error {
+  display: none;
+  color: var(--tint-red);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+.field-error:not(:empty) {
+  display: block;
+}
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--tint-red);
+  background-color: var(--tint-red-bg);
 }
 .field .hint {
   margin: 0;
@@ -666,12 +708,12 @@ form[aria-busy="true"] .btn-text {
 }
 .summary-label {
   margin: 0.2rem 0 1rem;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.95rem;
 }
 .summary-meta {
   margin: 0.2rem 0 0;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.80);
   font-size: 0.88rem;
 }
 .summary-badge {
@@ -760,7 +802,7 @@ caption {
   text-align: left;
   font-weight: 600;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.85);
   padding-bottom: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
